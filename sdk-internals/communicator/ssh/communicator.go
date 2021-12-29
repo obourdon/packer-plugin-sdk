@@ -514,10 +514,13 @@ func (c *comm) sftpUploadFile(path string, input io.Reader, client *sftp.Client,
 
 	if fi != nil && (*fi).Mode().IsRegular() {
 		mode := (*fi).Mode().Perm()
+		log.Printf("[DEBUG] OLIVIER: sftp chmoding %s %s", path, mode)
 		err = client.Chmod(path, mode)
 		if err != nil {
+			log.Printf("[DEBUG] OLIVIER: sftp error %+v", err)
 			return err
 		}
+		log.Printf("[DEBUG] OLIVIER: sftp OK")
 	}
 
 	return nil
@@ -573,9 +576,12 @@ func (c *comm) sftpMkdir(path string, client *sftp.Client, fi os.FileInfo) error
 	}
 
 	mode := fi.Mode().Perm()
+	log.Printf("[DEBUG] OLIVIER: sftp mkdir chmoding %s %s", path, mode)
 	if err := client.Chmod(path, mode); err != nil {
+		log.Printf("[DEBUG] OLIVIER: sftp mkdir error %+v", err)
 		return err
 	}
+	log.Printf("[DEBUG] OLIVIER: sftp mkdir OK")
 	return nil
 }
 

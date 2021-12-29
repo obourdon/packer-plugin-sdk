@@ -2,6 +2,7 @@ package guestexec
 
 import (
 	"fmt"
+	"log"
 	"strings"
 )
 
@@ -48,6 +49,9 @@ func NewGuestCommands(osType string, sudo bool) (*GuestCommands, error) {
 }
 
 func (g *GuestCommands) Chmod(path string, mode string) string {
+	log.Printf("OLIVIER Command Chmod mode [%s] path [%s] escaped [%s]", mode, path, g.escapePath(path))
+	log.Printf("OLIVIER Command Chmod [%s]", fmt.Sprintf(g.commands().chmod, mode, g.escapePath(path)))
+	log.Printf("OLIVIER Command Chmod sudoed [%s]", g.sudo(fmt.Sprintf(g.commands().chmod, mode, g.escapePath(path))))
 	return g.sudo(fmt.Sprintf(g.commands().chmod, mode, g.escapePath(path)))
 }
 
