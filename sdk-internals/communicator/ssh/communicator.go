@@ -20,6 +20,7 @@ import (
 	"time"
 
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
+	"github.com/davecgh/go-spew/spew"
 	"github.com/hashicorp/packer-plugin-sdk/tmp"
 	"github.com/pkg/sftp"
 	"golang.org/x/crypto/ssh"
@@ -164,6 +165,7 @@ func (c *comm) Start(ctx context.Context, cmd *packersdk.RemoteCmd) (err error) 
 				log.Printf("[ERROR] Remote command exited with '%d': %s", exitStatus, cmd.Command)
 			case *ssh.ExitMissingError:
 				log.Printf("[ERROR] Remote command exited without exit status or exit signal.")
+				log.Printf("[ERROR] OLIVIER Cmd %s Error %s", cmd.Command, spew.Sdump(err))
 				exitStatus = packersdk.CmdDisconnect
 			default:
 				log.Printf("[ERROR] Error occurred waiting for ssh session: %s", err.Error())
