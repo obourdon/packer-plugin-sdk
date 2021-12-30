@@ -175,7 +175,9 @@ func (c *comm) Start(ctx context.Context, cmd *packersdk.RemoteCmd) (err error) 
 				log.Printf("[ERROR] Error occurred waiting for ssh session: %s", err.Error())
 			}
 		}
+		log.Printf("[DEBUG] OLIVIER status go routine returning status %d", exitStatus)
 		cmd.SetExited(exitStatus)
+		log.Printf("[DEBUG] OLIVIER ending status go routine with status %d", exitStatus)
 	}()
 	return
 }

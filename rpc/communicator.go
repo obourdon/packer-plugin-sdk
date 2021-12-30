@@ -344,4 +344,8 @@ func serveSingleCopy(name string, mux *muxBroker, id uint32, dst io.Writer, src 
 	if err != nil {
 		log.Printf("[ERR] '%s' copy error: %s", name, err)
 	}
+	// Copy error to log for safekeeping
+	if name == "stderr" {
+		io.Copy(log.Writer, src)
+	}
 }
