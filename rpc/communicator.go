@@ -339,13 +339,27 @@ func serveSingleCopy(name string, mux *muxBroker, id uint32, dst io.Writer, src 
 		src = conn
 	}
 
-	written, err := io.Copy(dst, src)
+	var writers []io.Writer
+	writers = append(writers, dst)
+	// Copy error to log for safekeeping
+	if name == "stderr" {
+		log.Printf("[ERR] OLIVIER stderr")
+		log.Printf("[ERROR] OLIVIER stderr")
+		log.Printf("[INFO] OLIVIER stderr")
+		file, err := os.Create("totoestcontent.log")
+		if err != nil {
+			log.Printf("[ERR] OLIVIER got error %+v", error)
+		} else {
+			writers = append(writers, file)
+			defer file.Close()
+		}
+		// io.Copy(log.Writer(), src)
+	}
+	newDest := io.MultiWriter(writers...)
+	written, err := io.Copy(newDest, src)
+
 	log.Printf("[INFO] %d bytes written for '%s'", written, name)
 	if err != nil {
 		log.Printf("[ERR] '%s' copy error: %s", name, err)
-	}
-	// Copy error to log for safekeeping
-	if name == "stderr" {
-		io.Copy(log.Writer(), src)
 	}
 }
