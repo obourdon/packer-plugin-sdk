@@ -138,6 +138,7 @@ func (c *comm) Start(ctx context.Context, cmd *packersdk.RemoteCmd) (err error) 
 	}
 
 	go func() {
+		log.Printf("[DEBUG] OLIVIER starting go routine with keepalive: %d", c.config.KeepAliveInterval)
 		if c.config.KeepAliveInterval <= 0 {
 			return
 		}
@@ -146,14 +147,17 @@ func (c *comm) Start(ctx context.Context, cmd *packersdk.RemoteCmd) (err error) 
 		for range c.C {
 			_, err := session.SendRequest("keepalive@packer.io", true, nil)
 			if err != nil {
+				log.Printf("[ERROR] OLIVIER ending go routine with error: %+v", err)
 				return
 			}
 		}
+		log.Printf("[ERROR] OLIVIER ending go routine gracefully")
 	}()
 
 	// Start a goroutine to wait for the session to end and set the
 	// exit boolean and status.
 	go func() {
+		log.Printf("[DEBUG] OLIVIER starting status go routine")
 		defer session.Close()
 
 		err := session.Wait()
@@ -165,7 +169,7 @@ func (c *comm) Start(ctx context.Context, cmd *packersdk.RemoteCmd) (err error) 
 				log.Printf("[ERROR] Remote command exited with '%d': %s", exitStatus, cmd.Command)
 			case *ssh.ExitMissingError:
 				log.Printf("[ERROR] Remote command exited without exit status or exit signal.")
-				log.Printf("[ERROR] OLIVIER Cmd %s Error %s", cmd.Command, spew.Sdump(err))
+				log.Printf("[ERROR] OLIVIER Cmd %s Error %+v\n%s", cmd.Command, err, spew.Sdump(err))
 				exitStatus = packersdk.CmdDisconnect
 			default:
 				log.Printf("[ERROR] Error occurred waiting for ssh session: %s", err.Error())

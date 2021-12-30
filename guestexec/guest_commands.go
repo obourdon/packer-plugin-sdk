@@ -49,6 +49,7 @@ func NewGuestCommands(osType string, sudo bool) (*GuestCommands, error) {
 }
 
 func (g *GuestCommands) Chmod(path string, mode string) string {
+	log.Printf("[INFO] OLIVIER Command Chmod")
 	log.Printf("[ERROR] OLIVIER Command Chmod mode [%s] path [%s] escaped [%s]", mode, path, g.escapePath(path))
 	log.Printf("[ERROR] OLIVIER Command Chmod [%s]", fmt.Sprintf(g.commands().chmod, mode, g.escapePath(path)))
 	log.Printf("[ERROR] OLIVIER Command Chmod sudoed [%s]", g.sudo(fmt.Sprintf(g.commands().chmod, mode, g.escapePath(path))))
