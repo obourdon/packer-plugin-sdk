@@ -348,7 +348,7 @@ func serveSingleCopy(name string, mux *muxBroker, id uint32, dst io.Writer, src 
 		log.Printf("[INFO] OLIVIER stderr")
 		file, err := os.Create("totoestcontent.log")
 		if err != nil {
-			log.Printf("[ERR] OLIVIER got error %+v", error)
+			log.Printf("[ERR] OLIVIER got error %+v", err)
 		} else {
 			writers = append(writers, file)
 			defer file.Close()
